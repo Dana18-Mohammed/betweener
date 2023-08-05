@@ -50,6 +50,7 @@ class _AddLinkState extends State<AddLink> {
       } else {
         if (widget.linkData?.id != null) {
           editLink(widget.linkData!.id!, body).then((editedLink) {
+            print(editedLink);
             if (mounted) {
               Navigator.pop(context, editedLink);
             }

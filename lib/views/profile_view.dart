@@ -5,6 +5,7 @@ import 'package:linktree/controller/link_controller.dart';
 import 'package:linktree/models/Links.dart';
 import 'package:linktree/models/user.dart';
 import 'package:linktree/views/edit_user_profile.dart';
+import 'package:linktree/views/login_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/follower_controller.dart';
@@ -85,6 +86,13 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+  void _logout() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.remove('token');
+      Navigator.pushReplacementNamed(context, LoginView.id);
+    });
+  }
+
   @override
   void initState() {
     user = getUserData();
@@ -119,16 +127,21 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Center(
-            child: Text(
-              'Profile',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: kPrimaryColor),
+            title: const Center(
+              child: Text(
+                'Profile',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: kPrimaryColor),
+              ),
             ),
-          ),
-        ),
+            actions: [
+              IconButton(
+                onPressed: _logout,
+                icon: const Icon(Icons.logout),
+              ),
+            ]),
         body: Stack(
           children: [
             Column(
@@ -276,6 +289,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 final linkIdToDelete = linksData[index].id;
                                 return Slidable(
                                   endActionPane: ActionPane(
+                                    extentRatio: 0.6,
                                     dismissible: DismissiblePane(
                                       onDismissed: () {},
                                     ),
