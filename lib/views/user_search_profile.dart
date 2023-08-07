@@ -16,26 +16,31 @@ class Usersearch extends StatefulWidget {
 }
 
 class _UsersearchState extends State<Usersearch> {
-  late bool isFollowed = false;
+  bool isFollowed = false;
   late Followee followeeData;
+  late List<Follow> followingUsers;
 
+  bool isLoading = true;
   void submit(int userId) async {
     final body = {"followee_id": userId};
-
-    addFollow(body).then((value) {
-      setState(() {
-        followeeData.following.add(Following(
-          id: userId,
-          name: widget.user.name!,
-          email: widget.user.email!,
-        ));
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
+    Followee followes = await getFolloweeData();
+    followingUsers = followes.following!;
+    for (var following in followingUsers) {
+      if (following.id == userId) {
+        isFollowed = true;
+      } else {
+        isFollowed = false;
+        addFollow(body).then((value) {
+          setState(() {
+            followeeData.following!.add(Follow(
+              id: userId,
+              name: widget.user.name!,
+              email: widget.user.email!,
+            ));
+          });
+        });
+      }
+    }
   }
 
   @override
@@ -108,7 +113,7 @@ class _UsersearchState extends State<Usersearch> {
                                 ),
                               ),
                               child: Text(
-                                isFollowed ? 'Following' : 'Followed',
+                                (isFollowed ? 'Following' : 'Follow'),
                               ),
                             )
                           ],

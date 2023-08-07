@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linktree/views/add_Link.dart';
+import 'package:linktree/views/follow_pages/followes_list_page.dart';
+import 'package:linktree/views/follow_pages/following_list_page.dart';
 import 'package:linktree/views/home_view.dart';
 import 'package:linktree/views/login_view.dart';
 import 'package:linktree/views/main_app_view.dart';
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
         ProfileView.id: (context) => const ProfileView(),
         AddLink.id: (context) => const AddLink(),
         ReceiveView.id: (context) => const ReceiveView(),
+        FollowersList.id: (context) => const FollowersList(),
+        FollowingList.id: (context) => const FollowingList(),
       },
     );
   }

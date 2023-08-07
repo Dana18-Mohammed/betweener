@@ -5,6 +5,8 @@ import 'package:linktree/controller/link_controller.dart';
 import 'package:linktree/models/Links.dart';
 import 'package:linktree/models/user.dart';
 import 'package:linktree/views/edit_user_profile.dart';
+import 'package:linktree/views/follow_pages/followes_list_page.dart';
+import 'package:linktree/views/follow_pages/following_list_page.dart';
 import 'package:linktree/views/login_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,6 +40,8 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> delete(int linkId) async {
+    setState(() {});
+
     try {
       setState(() {
         linksData.removeWhere((link) => link.id == linkId);
@@ -79,8 +83,10 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> getNumberFollowers() async {
     try {
       Followee followee = await followeeData;
+
       follower = followee.followersCount;
       following = followee.followingCount;
+      setState(() {});
     } catch (e) {
       throw Exception();
     }
@@ -120,6 +126,7 @@ class _ProfileViewState extends State<ProfileView> {
           linksData.add(editedLink);
         }
       });
+      setState(() {});
     }
   }
 
@@ -162,9 +169,9 @@ class _ProfileViewState extends State<ProfileView> {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 8),
+                                  vertical: 16, horizontal: 4),
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   const CircleAvatar(
                                     radius: 50,
@@ -218,7 +225,10 @@ class _ProfileViewState extends State<ProfileView> {
                                       Row(
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pushNamed(
+                                                  context, FollowersList.id);
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: kSecondaryColor,
                                               foregroundColor: Colors.black,
@@ -236,7 +246,10 @@ class _ProfileViewState extends State<ProfileView> {
                                           ),
                                           const SizedBox(width: 16),
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pushNamed(
+                                                  context, FollowingList.id);
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: kSecondaryColor,
                                               foregroundColor: Colors.black,
@@ -287,90 +300,97 @@ class _ProfileViewState extends State<ProfileView> {
                                 final linkTitle = snapshot.data?[index].title;
                                 final link = snapshot.data?[index].link;
                                 final linkIdToDelete = linksData[index].id;
-                                return Slidable(
-                                  endActionPane: ActionPane(
-                                    extentRatio: 0.6,
-                                    dismissible: DismissiblePane(
-                                      onDismissed: () {},
-                                    ),
-                                    motion: const StretchMotion(),
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: (context) {
-                                          setState(() {
-                                            _showEditPage(
-                                                snapshot.data![index]);
-                                          });
-                                        },
-                                        backgroundColor: kSecondaryColor,
-                                        borderRadius: BorderRadius.circular(20),
-                                        padding: const EdgeInsets.all(32),
-                                        icon: Icons.edit,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      SlidableAction(
-                                        onPressed: (context) {
-                                          if (linkIdToDelete != null) {
-                                            setState(() {
-                                              delete(linkIdToDelete);
-                                            });
-                                          }
-                                        },
-                                        backgroundColor: Colors.red,
-                                        icon: Icons.delete,
-                                        borderRadius: BorderRadius.circular(20),
-                                        padding: const EdgeInsets.all(8),
-                                      )
-                                    ],
-                                  ),
-                                  child: Container(
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 8),
-                                    child: Expanded(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Slidable(
+                                      endActionPane: ActionPane(
+                                        extentRatio: 0.6,
+                                        dismissible: DismissiblePane(
+                                          onDismissed: () {},
+                                        ),
+                                        motion: const StretchMotion(),
                                         children: [
-                                          Container(
-                                            width: 350,
-                                            height: 80,
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: index % 2 == 0
-                                                  ? kLightDangerColor
-                                                  : kLightPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  '$linkTitle'.toUpperCase(),
-                                                  style: TextStyle(
-                                                    color: index % 2 == 0
-                                                        ? kOnLightDangerColor
-                                                        : kPrimaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '$link',
-                                                  style: TextStyle(
-                                                    color: index % 2 == 0
-                                                        ? kOnLightDangerColor
-                                                        : kPrimaryColor,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                          SlidableAction(
+                                            onPressed: (context) {
+                                              setState(() {
+                                                _showEditPage(
+                                                    snapshot.data![index]);
+                                              });
+                                            },
+                                            backgroundColor: kSecondaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            padding: const EdgeInsets.all(32),
+                                            icon: Icons.edit,
+                                            foregroundColor: Colors.white,
                                           ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          SlidableAction(
+                                            onPressed: (context) {
+                                              if (linkIdToDelete != null) {
+                                                setState(() {
+                                                  delete(linkIdToDelete);
+                                                });
+                                              }
+                                            },
+                                            backgroundColor: Colors.red,
+                                            icon: Icons.delete,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            padding: const EdgeInsets.all(8),
+                                          )
                                         ],
+                                      ),
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: 350,
+                                              height: 80,
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: index % 2 == 0
+                                                    ? kLightDangerColor
+                                                    : kLightPrimaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    '$linkTitle'.toUpperCase(),
+                                                    style: TextStyle(
+                                                      color: index % 2 == 0
+                                                          ? kOnLightDangerColor
+                                                          : kPrimaryColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    '$link',
+                                                    style: TextStyle(
+                                                      color: index % 2 == 0
+                                                          ? kOnLightDangerColor
+                                                          : kPrimaryColor,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
