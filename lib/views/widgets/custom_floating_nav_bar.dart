@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/constants.dart';
+import '../../core/utilies/constants.dart';
 
 class CustomFloatingNavBar extends StatelessWidget {
   final int currentIndex;

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 //=========end points
-const baseUrl = 'http://www.osamapro.online/api';
+const baseUrl = 'https://betweener.gsgtt.tech/api';
+// const baseUrl = 'http://www.osamapro.online/api';
 const loginUrl = '$baseUrl/login';
 const regUrl = '$baseUrl/register';
 const linkUrl = '$baseUrl/links';
@@ -25,3 +27,9 @@ const kLightPrimaryColor = Color(0xffE7E5F1);
 const kLightSecondaryColor = Color(0xffFFE6A6);
 const kLightDangerColor = Color(0xffFEE2E7);
 const kOnLightDangerColor = Color(0xff783341);
+
+//===============
+// const CameraPosition kGooglePlex = CameraPosition(
+//   target: LatLng(37.42796133580664, -122.085749655962),
+//   zoom: 14.4746,
+// );

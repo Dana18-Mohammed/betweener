@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/styles.dart';
+import '../../core/utilies/constants.dart';
+import '../../core/utilies/styles.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String label;

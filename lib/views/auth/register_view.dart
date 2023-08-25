@@ -1,43 +1,42 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:linktree/controller/auth_conttroller.dart';
-import 'package:linktree/models/user.dart';
-import 'package:linktree/views/main_app_view.dart';
+import 'package:linktree/views/auth/login_view.dart';
 import 'package:linktree/views/widgets/custom_text_form_field.dart';
 import 'package:linktree/views/widgets/secondary_button_widget.dart';
-import 'package:linktree/assets.dart';
-import 'package:linktree/views/register_view.dart';
-import 'package:linktree/views/widgets/primary_outlined_button_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'widgets/google_button_widget.dart';
+import '../../../views/widgets/google_button_widget.dart';
+import '../../core/utilies/assets.dart';
 
-class LoginView extends StatefulWidget {
-  static String id = '/loginView';
+class RegisterView extends StatefulWidget {
+  static String id = '/registerView';
 
-  const LoginView({super.key});
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
+  TextEditingController nameController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmationController =
+      TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   void submit() {
     if (_formKey.currentState!.validate()) {
       final body = {
+        "name": nameController.text,
         "email": emailController.text,
-        "password": passwordController.text
+        "password": passwordController.text,
+        "password_confirmation": passwordConfirmationController.text
       };
-      login(body).then((user) async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', userToJson(user));
-        if (mounted) {
-          Navigator.pushNamed(context, MainAppView.id);
-        }
+      register(body).then((user) {
+        Navigator.pushNamed(context, LoginView.id);
       }).onError((error, stackTrace) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(error.toString())));
@@ -48,36 +47,50 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Register"),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+          //replace with our own icon data.
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height -
+                AppBar().preferredSize.height,
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
                   const Spacer(),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height / 5,
+                      height: MediaQuery.of(context).size.height / 8,
                       child: Hero(
                           tag: 'authImage',
                           child: SvgPicture.asset(AssetsData.authImage))),
-                  const Spacer(),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  CustomTextFormField(
+                    controller: nameController,
+                    hint: 'John Doe',
+                    label: 'Name',
+                  ),
+                  const SizedBox(
+                    height: 14,
+                  ),
                   CustomTextFormField(
                     controller: emailController,
                     hint: 'example@gmail.com',
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [AutofillHints.email],
                     label: 'Email',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please enter the email';
-                      } else if (!EmailValidator.validate(value)) {
-                        return 'please enter a valid email';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(
                     height: 14,
@@ -86,25 +99,25 @@ class _LoginViewState extends State<LoginView> {
                     controller: passwordController,
                     hint: 'Enter password',
                     label: 'password',
-                    autofillHints: const [AutofillHints.password],
                     password: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please enter the password';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(
                     height: 24,
                   ),
-                  SecondaryButtonWidget(onTap: submit, text: 'LOGIN'),
+                  CustomTextFormField(
+                    controller: passwordConfirmationController,
+                    hint: 'confirmation password',
+                    label: 'confirmation password',
+                    password: true,
+                  ),
                   const SizedBox(
                     height: 24,
                   ),
-                  PrimaryOutlinedButtonWidget(
+                  SecondaryButtonWidget(
                       onTap: () {
-                        Navigator.pushNamed(context, RegisterView.id);
+                        if (_formKey.currentState!.validate()) {
+                          submit();
+                        }
                       },
                       text: 'REGISTER'),
                   const SizedBox(

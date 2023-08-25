@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:linktree/provider/follow_provider.dart';
 
-import '../../constants.dart';
-import '../../controller/follower_controller.dart';
-import '../../models/followee.dart';
+import '../../controller/follower_repository.dart';
+import '../../core/utilies/constants.dart';
+import '../../models/followee_response_model.dart';
 
 class FollowersList extends StatefulWidget {
   static String id = '/FollowersList';
@@ -15,15 +15,11 @@ class FollowersList extends StatefulWidget {
 
 class _FollowersListState extends State<FollowersList> {
   late Future<List<Follow>?> followingUsers;
-
-  Future<List<Follow>?> _getFollowers() async {
-    Followee followes = await getFolloweeData();
-    return followes.followers;
-  }
+  FollowProvider followProvider = FollowProvider();
 
   @override
   void initState() {
-    followingUsers = _getFollowers();
+    followingUsers = FolloweeRepository().getFollowers();
     super.initState();
   }
 

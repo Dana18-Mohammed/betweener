@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
-import 'package:linktree/constants.dart';
+
 import 'package:linktree/models/user.dart';
+
+import '../core/utilies/constants.dart';
 
 Future<User> login(Map<String, String> body) async {
   final response = await http.post(Uri.parse(loginUrl), body: body);

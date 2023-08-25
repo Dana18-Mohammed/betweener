@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:linktree/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/utilies/constants.dart';
 import '../models/user.dart';
 import 'package:http/http.dart' as http;
 

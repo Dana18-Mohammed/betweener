@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/constants.dart';
+import '../../../core/utilies/constants.dart';
 import 'package:linktree/controller/serach_user.dart';
-import 'package:linktree/views/user_search_profile.dart';
-import '../models/followee.dart';
-import '../models/user.dart';
+import 'package:linktree/views/search/user_search_profile.dart';
+import '../../models/followee_response_model.dart';
+import '../../models/user.dart';
 
 class SearchPage extends StatefulWidget {
   static String id = '/Search';

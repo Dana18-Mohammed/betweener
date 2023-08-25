@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:linktree/models/Links.dart';
+import 'package:linktree/models/link_response_model.dart';
 
 User userFromJson(String str) => User.fromJson(json.decode(str));
 
@@ -33,13 +33,13 @@ class UserClass {
   dynamic emailVerifiedAt;
   String? createdAt;
   String? updatedAt;
-  int? isActive;
+  String? isActive;
   dynamic country;
   dynamic ip;
   dynamic long;
   dynamic lat;
   bool isFollowed;
-  List<Links>? links;
+  List<Link>? links;
 
   UserClass(
       {this.id,
@@ -69,7 +69,7 @@ class UserClass {
         long: json["long"],
         lat: json["lat"],
         links: json["links"] != null
-            ? List<Links>.from(json["links"].map((x) => Links.fromJson(x)))
+            ? List<Link>.from(json["links"].map((x) => Link.fromJson(x)))
             : null,
       );
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:linktree/assets.dart';
-import 'package:linktree/constants.dart';
-import 'package:linktree/views/login_view.dart';
+import '../../../core/utilies/constants.dart';
 import 'package:linktree/views/widgets/secondary_button_widget.dart';
+
+import '../../core/utilies/assets.dart';
+import '../auth/login_view.dart';
 
 class OnBoardingView extends StatelessWidget {
   static String id = '/onBoardingView';

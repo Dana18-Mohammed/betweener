@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/views/home_view.dart';
-import 'package:linktree/views/profile_view.dart';
-import 'package:linktree/views/register_view.dart';
+import 'package:linktree/views/home/home_view.dart';
+import 'package:linktree/views/profile/profile_view.dart';
+import 'package:linktree/views/auth/register_view.dart';
 import 'package:linktree/views/widgets/custom_floating_nav_bar.dart';
 
 class MainAppView extends StatefulWidget {

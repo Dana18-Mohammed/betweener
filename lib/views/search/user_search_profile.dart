@@ -1,9 +1,13 @@
+import 'dart:core';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
-import 'package:linktree/constants.dart';
+import 'package:linktree/provider/follow_provider.dart';
+import '../../../core/utilies/constants.dart';
 import 'package:linktree/models/user.dart';
 
-import '../controller/follower_controller.dart';
-import '../models/followee.dart';
+import '../../controller/follower_repository.dart';
+import '../../models/followee_response_model.dart';
 
 class Usersearch extends StatefulWidget {
   final UserClass user;
@@ -19,26 +23,28 @@ class _UsersearchState extends State<Usersearch> {
   bool isFollowed = false;
   late Followee followeeData;
   late List<Follow> followingUsers;
+  FollowProvider followProvider = FollowProvider();
 
   bool isLoading = true;
   void submit(int userId) async {
     final body = {"followee_id": userId};
-    Followee followes = await getFolloweeData();
+    Followee followes = await followProvider.getFolloweeData();
     followingUsers = followes.following!;
     for (var following in followingUsers) {
       if (following.id == userId) {
         isFollowed = true;
       } else {
         isFollowed = false;
-        addFollow(body).then((value) {
-          setState(() {
-            followeeData.following!.add(Follow(
-              id: userId,
-              name: widget.user.name!,
-              email: widget.user.email!,
-            ));
-          });
-        });
+        //   addFollow(body).then((value) {
+        //     setState(() {
+        //       followeeData.following!.add(Follow(
+        //         id: userId,
+        //         name: widget.user.name!,
+        //         email: widget.user.email!,
+        //       ));
+        //     });
+        //   });
+        // }
       }
     }
   }

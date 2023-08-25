@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/constants.dart';
+import '../../../core/utilies/constants.dart';
 import 'package:linktree/views/widgets/custom_text_form_field.dart';
 import 'package:linktree/views/widgets/secondary_button_widget.dart';
 
-import '../models/user.dart';
+import '../../models/user.dart';
 
 class EditUserProfile extends StatefulWidget {
   static String id = '/EditProfile';

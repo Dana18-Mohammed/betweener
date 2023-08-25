@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:linktree/models/link_response_model.dart';
+
 Followee followeeFromJson(String str) => Followee.fromJson(json.decode(str));
 
 String followeeToJson(Followee data) => json.encode(data.toJson());
@@ -110,46 +112,46 @@ class Follow {
       };
 }
 
-class Link {
-  int? id;
-  String? title;
-  String? link;
-  String? username;
-  int? isActive;
-  int? userId;
-  String? createdAt;
-  String? updatedAt;
-
-  Link({
-    this.id,
-    this.title,
-    this.link,
-    this.username,
-    this.isActive,
-    this.userId,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  factory Link.fromJson(Map<String, dynamic> json) => Link(
-        id: json["id"],
-        title: json["title"],
-        link: json["link"],
-        username: json["username"],
-        isActive: json["isActive"],
-        userId: json["user_id"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "link": link,
-        "username": username,
-        "isActive": isActive,
-        "user_id": userId,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
-      };
-}
+// class Link {
+//   int? id;
+//   String? title;
+//   String? link;
+//   String? username;
+//   int? isActive;
+//   int? userId;
+//   String? createdAt;
+//   String? updatedAt;
+//
+//   Link({
+//     this.id,
+//     this.title,
+//     this.link,
+//     this.username,
+//     this.isActive,
+//     this.userId,
+//     this.createdAt,
+//     this.updatedAt,
+//   });
+//
+//   factory Link.fromJson(Map<String, dynamic> json) => Link(
+//         id: json["id"],
+//         title: json["title"],
+//         link: json["link"],
+//         username: json["username"],
+//         isActive: json["isActive"],
+//         userId: json["user_id"],
+//         createdAt: json["created_at"],
+//         updatedAt: json["updated_at"],
+//       );
+//
+//   Map<String, dynamic> toJson() => {
+//         "id": id,
+//         "title": title,
+//         "link": link,
+//         "username": username,
+//         "isActive": isActive,
+//         "user_id": userId,
+//         "created_at": createdAt,
+//         "updated_at": updatedAt,
+//       };
+// }

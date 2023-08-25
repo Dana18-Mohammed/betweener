@@ -1,74 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/constants.dart';
-import 'package:linktree/models/Links.dart';
+import 'package:linktree/provider/link_provider.dart';
+import 'package:linktree/core/utilies/constants.dart';
+import 'package:linktree/models/link_response_model.dart';
 import 'package:linktree/views/widgets/custom_text_form_field.dart';
 import 'package:linktree/views/widgets/secondary_button_widget.dart';
 
-import '../controller/link_controller.dart';
-
 class AddLink extends StatefulWidget {
   static String id = '/AddLink';
-  final Links? linkData;
-  final List<Links>? linksData;
-  const AddLink({Key? key, this.linkData, this.linksData}) : super(key: key);
+  final Link? linkData;
+
+  const AddLink({Key? key, this.linkData}) : super(key: key);
 
   @override
   State<AddLink> createState() => _AddLinkState();
 }
 
 class _AddLinkState extends State<AddLink> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController linkController = TextEditingController();
-  TextEditingController userNameController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController linkController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     if (widget.linkData != null) {
-      titleController.text = widget.linkData!.title!;
-      linkController.text = widget.linkData!.link!;
-      userNameController.text = widget.linkData!.username!;
+      final linkData = widget.linkData!;
+      titleController.text = linkData.title!;
+      linkController.text = linkData.link!;
+      userNameController.text = linkData.username!;
     }
   }
 
   void submit() {
     if (_formKey.currentState!.validate()) {
-      final body = {
-        "title": titleController.text,
-        "link": linkController.text,
-        "username": userNameController.text,
-      };
-
       if (widget.linkData == null) {
-        addLink(body).then((addedLink) {
-          setState(() {
-            widget.linksData?.add(addedLink);
-          });
-          Navigator.pop(context, addedLink);
-        });
-      } else {
-        if (widget.linkData?.id != null) {
-          editLink(widget.linkData!.id!, body).then((editedLink) {
-            print(editedLink);
-            if (mounted) {
-              Navigator.pop(context, editedLink);
-            }
-          });
-        }
+        LinkProvider().addLink(
+          titleController.text,
+          linkController.text,
+          userNameController.text,
+        );
+      } else if (widget.linkData?.id != null) {
+        LinkProvider().editLink(
+          widget.linkData?.id!,
+          titleController.text,
+          linkController.text,
+          userNameController.text,
+        );
       }
-
-      titleController.clear();
-      linkController.clear();
-      userNameController.clear();
-      Navigator.pop(
-        context,
-        Links(
-          title: body["title"]!,
-          link: body["link"]!,
-          username: body["username"]!,
-        ),
-      );
+      Navigator.of(context).pop();
     }
   }
 

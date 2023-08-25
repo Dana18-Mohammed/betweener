@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:linktree/controller/link_controller.dart';
-import 'package:linktree/controller/user_controller.dart';
-import 'package:linktree/models/Links.dart';
+import 'package:linktree/models/link_response_model.dart';
 import 'package:linktree/models/user.dart';
-import 'package:linktree/views/add_Link.dart';
-import 'package:linktree/views/search_view.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:linktree/provider/link_provider.dart';
+import 'package:linktree/views/search/search_view.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-import '../constants.dart';
+import '../../../core/utilies/constants.dart';
+import '../../controller/user_repository.dart';
+import '../../core/helpers/api_response.dart';
+import '../links/add_Link.dart';
 
 class HomeView extends StatefulWidget {
   static String id = '/homeView';
-  // final User? user;
   const HomeView({Key? key}) : super(key: key);
 
   @override
@@ -22,41 +23,27 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late Future<User> user;
   late Future<List<User>> listUser;
-  late Future<List<Links>> links;
-  late List<Links> linksData;
+  late Future<List<Link>> links;
+  LinkProvider linkProvider = LinkProvider();
+  void _addLinkToProvider(Link addedLink) {
+    final provider = Provider.of<LinkProvider>(context, listen: false);
+    provider.addLink(addedLink.title!, addedLink.link!, addedLink.username!);
+  }
 
   Future<void> _navigateToAddLinkPage() async {
     final addedLink = await Navigator.pushNamed(
       context,
       AddLink.id,
-      arguments: linksData,
     );
-    if (addedLink != null && addedLink is Links) {
-      setState(() {
-        if (!linksData.contains(addedLink)) {
-          linksData.add(addedLink);
-        }
-      });
-      getLinks(context).then((updatedLinks) {
-        setState(() {
-          links = Future.value(updatedLinks);
-        });
-      });
+
+    if (addedLink != null && addedLink is Link) {
+      _addLinkToProvider(addedLink);
     }
   }
 
   @override
   void initState() {
-    user = getLocalUser();
-    setState(() {
-      links = getLinks(context);
-    });
-    linksData = [];
-    getLinks(context).then((links) {
-      setState(() {
-        linksData = links;
-      });
-    });
+    user = UserRepository().getLocalUser();
 
     super.initState();
   }
@@ -79,10 +66,10 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () async {
               String barcodeScanResult =
                   await FlutterBarcodeScanner.scanBarcode(
-                '#FF0000', // Color of the toolbar
-                'Cancel', // Cancel button text
-                true, // Show flash icon
-                ScanMode.QR, // Scan mode (QR, BARCODE, or DEFAULT)
+                '#FF0000',
+                'Cancel',
+                true,
+                ScanMode.QR,
               );
 
               if (barcodeScanResult != '-1') {
@@ -144,19 +131,23 @@ class _HomeViewState extends State<HomeView> {
             const SizedBox(
               height: 40,
             ),
-            FutureBuilder(
-              future: links,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
+            Consumer<LinkProvider>(
+              builder: (_, linkProvider, __) {
+                if (linkProvider.link!.status == Status.LOADING) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (linkProvider.link!.status == Status.COMPLETED) {
+                  print(linkProvider.link?.data);
                   return SizedBox(
                     height: 125,
                     child: ListView.separated(
                         padding: const EdgeInsets.all(12),
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          if (index < snapshot.data!.length) {
-                            final link = snapshot.data?[index].title;
-                            final username = snapshot.data?[index].username;
+                          if (index < linkProvider.link!.data!.length) {
+                            final link = linkProvider.link!.data![index].title;
+                            final username =
+                                linkProvider.link!.data![index].username;
                             return Container(
                               width: 140,
                               padding: const EdgeInsets.all(12),
@@ -183,10 +174,10 @@ class _HomeViewState extends State<HomeView> {
                                 ],
                               ),
                             );
-                          } else if (index == snapshot.data!.length) {
+                          } else if (index == linkProvider.link!.data!.length) {
                             return GestureDetector(
-                              onTap: () {
-                                _navigateToAddLinkPage();
+                              onTap: () async {
+                                await _navigateToAddLinkPage();
                               },
                               child: Container(
                                 width: 140,
@@ -224,15 +215,102 @@ class _HomeViewState extends State<HomeView> {
                             width: 8,
                           );
                         },
-                        itemCount: snapshot.data!.length + 1),
+                        itemCount: linkProvider.link!.data!.length + 1),
                   );
                 }
-                if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
-                return const Text('loading');
+
+                return Center(child: Text('${linkProvider.link!.message}'));
               },
             ),
+            // FutureBuilder(
+            //   future: links,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       return SizedBox(
+            //         height: 125,
+            //         child: ListView.separated(
+            //             padding: const EdgeInsets.all(12),
+            //             scrollDirection: Axis.horizontal,
+            //             itemBuilder: (context, index) {
+            //               if (index < snapshot.data!.length) {
+            //                 final link = snapshot.data?[index].title;
+            //                 final username = snapshot.data?[index].username;
+            //                 return Container(
+            //                   width: 140,
+            //                   padding: const EdgeInsets.all(12),
+            //                   decoration: BoxDecoration(
+            //                       color: kLightSecondaryColor,
+            //                       borderRadius: BorderRadius.circular(15)),
+            //                   child: Column(
+            //                     children: [
+            //                       Text(
+            //                         '$link'.toUpperCase(),
+            //                         style: const TextStyle(
+            //                             color: kOnSecondaryColor,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 18),
+            //                       ),
+            //                       const SizedBox(
+            //                         height: 10,
+            //                       ),
+            //                       Text(
+            //                         '@$username'.toLowerCase(),
+            //                         style: const TextStyle(
+            //                             color: kOnSecondaryColor, fontSize: 14),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                 );
+            //               } else if (index == snapshot.data!.length) {
+            //                 return GestureDetector(
+            //                   onTap: () {
+            //                     _navigateToAddLinkPage();
+            //                   },
+            //                   child: Container(
+            //                     width: 140,
+            //                     padding: const EdgeInsets.all(12),
+            //                     decoration: BoxDecoration(
+            //                       color: kLightSecondaryColor,
+            //                       borderRadius: BorderRadius.circular(15),
+            //                     ),
+            //                     child: Column(
+            //                       children: [
+            //                         const Icon(
+            //                           Icons.add,
+            //                           size: 35,
+            //                           weight: 16,
+            //                           color: kOnSecondaryColor,
+            //                         ),
+            //                         Text(
+            //                           'Add'.toUpperCase(),
+            //                           style: const TextStyle(
+            //                             color: kOnSecondaryColor,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 20,
+            //                           ),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                   ),
+            //                 );
+            //               } else {
+            //                 return Container();
+            //               }
+            //             },
+            //             separatorBuilder: (context, index) {
+            //               return const SizedBox(
+            //                 width: 8,
+            //               );
+            //             },
+            //             itemCount: snapshot.data!.length + 1),
+            //       );
+            //     }
+            //     if (snapshot.hasError) {
+            //       return Text(snapshot.error.toString());
+            //     }
+            //     return const Text('loading');
+            //   },
+            // ),
           ],
         ),
       ),
